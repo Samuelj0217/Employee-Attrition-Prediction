@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <button onclick="window.location.href='/logout'" class="logout-btn">Logout</button>
+    <h1>Employee Attrition Dashboard</h1>
+
+    <!-- Search Form -->
+    <form method="POST" action="/search">
+      <label for="emp_id">Search Employee ID:</label>
+      <input type="text" id="emp_id" name="emp_id" placeholder="Enter EmployeeID" required>
+      <button type="submit">Search</button>
+    </form>
+
+    <!-- CSV Upload -->
+    <h3 style="margin-top:20px;">Upload Updated Employee CSV</h3>
+    <form method="POST" action="/upload_csv" enctype="multipart/form-data">
+      <input type="file" name="file" accept=".csv" required>
+      <button type="submit">Upload & Analyze</button>
+    </form>
+
+    <!-- View Chart Button -->
+    <button onclick="window.location.href='/chart'" style="margin-top:15px;">View Attrition Chart</button>
+
+    {% if message %}
+      <p style="color:lime; margin-top:10px;">{{ message }}</p>
+    {% endif %}
+
+    <!-- Employee Info -->
+    {% if employee %}
+      <div class="employee-info">
+        <h2>Employee Details</h2>
+        <div class="details-card">
+          <p><span>ID:</span> {{ employee["EmployeeID"] }}</p>
+          <p><span>Age:</span> {{ employee["Age"] }}</p>
+          <p><span>Income:</span> {{ employee["MonthlyIncome"] }}</p>
+          <p><span>Job Role:</span> {{ employee["JobRole"] }}</p>
+          <p><span>Years at Company:</span> {{ employee["YearsAtCompany"] }}</p>
+          <p><span>Marital Status:</span> {{ "Married" if employee["MaritalStatus"] == 1 else "Single" }}</p>
+          <p><span>Gender:</span> {{ employee["Gender"] }}</p>
+        </div>
+
+        {% if prediction %}
+          <div id="result" class="{{ 'stay' if prediction == 'Stay' else 'leave' }}">
+            Prediction: {{ prediction }}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+</div>
+</body>
+</html>

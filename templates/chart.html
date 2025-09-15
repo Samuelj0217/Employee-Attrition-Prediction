@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Attrition Chart</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+    <button onclick="window.location.href='/home'" class="logout-btn">Back</button>
+    <h3>Employee Attrition Chart</h3>
+    <canvas id="attritionChart" width="400" height="300"></canvas>
+</div>
+
+<script>
+const ctx = document.getElementById('attritionChart').getContext('2d');
+const attritionChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['Stay', 'Leave'],
+        datasets: [{
+            label: 'Employee Count',
+            data: [{{ stay_count }}, {{ leave_count }}],
+            backgroundColor: [
+                'rgba(76, 175, 80, 0.7)',
+                'rgba(244, 67, 54, 0.7)'
+            ],
+            borderColor: [
+                'rgba(76, 175, 80, 1)',
+                'rgba(244, 67, 54, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom' },
+            title: { display: true, text: 'Employee Attrition Overview' }
+        }
+    }
+});
+</script>
+</body>
+</html>

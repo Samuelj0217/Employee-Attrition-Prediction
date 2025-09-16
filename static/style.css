@@ -4,6 +4,41 @@
    ------------------------------------------------------------------ */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+/* Base styles (optional reset) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Page background */
+body {
+  background: #f7f9fc;
+  font-family: Arial, sans-serif;
+}
+
+/* Card styling */
+.card {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+  margin: 1rem auto;
+  max-width: 500px;
+}
+
+/* Prediction results */
+.result-stay {
+  background: rgba(76,175,80,0.08);
+  border-left: 6px solid #4CAF50;
+  padding: 1rem;
+}
+
+.result-leave {
+  background: rgba(244,67,54,0.08);
+  border-left: 6px solid #F44336;
+  padding: 1rem;
+}
+
 
 /* Page background & centering */
 html, body {

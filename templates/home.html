@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <div class="card p-3 mb-3 shadow-sm">
+      <h5>Start Prediction</h5>
+      <form method="POST" action="{{ url_for('predict') }}">
+        <div class="mb-2">
+          <label class="form-label">Age</label>
+          <input class="form-control" name="age" type="number" min="18" max="80" required>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Monthly Income</label>
+          <input class="form-control" name="income" type="number" required>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Job Role</label>
+          <select class="form-select" name="jobrole" required>
+            {% for j in job_roles %}
+            <option value="{{ j }}">{{ j }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Years at Company</label>
+          <input class="form-control" name="years" type="number" min="0" max="50" required>
+        </div>
+        <div class="mb-2">
+ <label for="marital">Marital Status</label>
+<select class="form-select mb-3" id="marital" name="marital" required>
+  <option value="0">Single</option>
+  <option value="1">Married</option>
+</select>
+
+
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Gender</label>
+          <select class="form-select" name="gender" required>
+            {% for g in genders %}
+            <option value="{{ g }}">{{ g }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn btn-success w-100" type="submit">Predict Now</button>
+      </form>
+    </div>
+
+    <div class="card p-3 shadow-sm">
+      <h6>Quick Search</h6>
+      <form method="POST" action="{{ url_for('search') }}">
+        <div class="input-group">
+          <input class="form-control" name="emp_id" placeholder="Enter EmployeeID" required>
+          <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+      </form>
+
+      <hr>
+
+      <h6>Upload CSV</h6>
+      <form method="POST" action="{{ url_for('upload_csv') }}" enctype="multipart/form-data">
+        <input class="form-control form-control-sm mb-2" type="file" name="file" accept=".csv" required>
+        <button class="btn btn-sm btn-primary w-100" type="submit">Upload & Update</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="card p-3 text-center shadow-sm">
+          <h6>Total Employees</h6>
+          <h2>{{ (stay_count + leave_count) }}</h2>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card p-3 text-center shadow-sm">
+          <h6>Stay</h6>
+          <h3 class="text-success">{{ stay_count }}</h3>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card p-3 text-center shadow-sm">
+          <h6>Leave</h6>
+          <h3 class="text-danger">{{ leave_count }}</h3>
+        </div>
+      </div>
+    </div>
+
+    {% if employee %}
+    <div class="card p-3 mt-3 shadow-sm">
+      <h5>Employee Details</h5>
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>ID:</strong> {{ employee["EmployeeID"] }}</p>
+          <p><strong>Age:</strong> {{ employee["Age"] }}</p>
+          <p><strong>Job Role:</strong> {{ employee["JobRole"] }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Income:</strong> {{ employee["MonthlyIncome"] }}</p>
+          <p><strong>Years:</strong> {{ employee["YearsAtCompany"] }}</p>
+          <p><strong>Gender:</strong> {{ employee["Gender"] }}</p>
+        </div>
+      </div>
+      {% if prediction %}
+        <div class="mt-2 alert {{ 'alert-danger' if prediction=='Leave' else 'alert-success' }}">
+          Prediction: <strong>{{ prediction }}</strong>
+          {% if probability %} — {{ probability }}% chance of leaving{% endif %}
+        </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

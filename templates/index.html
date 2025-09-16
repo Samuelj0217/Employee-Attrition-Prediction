@@ -4,50 +4,95 @@
   <meta charset="UTF-8">
   <title>Employee Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Bootstrap (optional for better styling) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container">
-    <button onclick="window.location.href='/logout'" class="logout-btn">Logout</button>
-    <h1>Employee Attrition Dashboard</h1>
+<div class="container mt-4">
+    <button onclick="window.location.href='/logout'" class="btn btn-danger float-end">Logout</button>
+    <h1 class="mb-4">Employee Attrition Dashboard</h1>
 
     <!-- Search Form -->
-    <form method="POST" action="/search">
+    <form method="POST" action="/search" class="mb-4">
       <label for="emp_id">Search Employee ID:</label>
       <input type="text" id="emp_id" name="emp_id" placeholder="Enter EmployeeID" required>
-      <button type="submit">Search</button>
+      <button type="submit" class="btn btn-primary">Search</button>
     </form>
 
     <!-- CSV Upload -->
-    <h3 style="margin-top:20px;">Upload Updated Employee CSV</h3>
-    <form method="POST" action="/upload_csv" enctype="multipart/form-data">
+    <h3>Upload Updated Employee CSV</h3>
+    <form method="POST" action="/upload_csv" enctype="multipart/form-data" class="mb-4">
       <input type="file" name="file" accept=".csv" required>
-      <button type="submit">Upload & Analyze</button>
+      <button type="submit" class="btn btn-success">Upload & Analyze</button>
     </form>
 
     <!-- View Chart Button -->
-    <button onclick="window.location.href='/chart'" style="margin-top:15px;">View Attrition Chart</button>
+    <button onclick="window.location.href='/chart'" class="btn btn-info mb-4">View Attrition Chart</button>
 
     {% if message %}
-      <p style="color:lime; margin-top:10px;">{{ message }}</p>
+      <p style="color:lime;">{{ message }}</p>
     {% endif %}
+
+    <!-- Prediction Form -->
+    <h3>Test Prediction for New Employee</h3>
+    <form method="POST" action="/home" class="mb-4">
+      <div class="mb-3">
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required>
+      </div>
+      <div class="mb-3">
+        <label for="income">Monthly Income:</label>
+        <input type="number" id="income" name="income" required>
+      </div>
+      <div class="mb-3">
+        <label for="jobrole">Job Role:</label>
+        <select id="jobrole" name="jobrole" required>
+          <option value="">--Select--</option>
+          {% for jr in job_roles %}
+          <option value="{{ jr }}">{{ jr }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="years">Years at Company:</label>
+        <input type="number" id="years" name="years" required>
+      </div>
+      <div class="mb-3">
+        <label for="marital">Marital Status:</label>
+        <select id="marital" name="marital" required>
+          <option value="">--Select--</option>
+          <option value="0">Single</option>
+          <option value="1">Married</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="gender">Gender:</label>
+        <select id="gender" name="gender" required>
+          <option value="">--Select--</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-warning">Predict Now</button>
+    </form>
 
     <!-- Employee Info -->
     {% if employee %}
       <div class="employee-info">
         <h2>Employee Details</h2>
-        <div class="details-card">
-          <p><span>ID:</span> {{ employee["EmployeeID"] }}</p>
-          <p><span>Age:</span> {{ employee["Age"] }}</p>
-          <p><span>Income:</span> {{ employee["MonthlyIncome"] }}</p>
-          <p><span>Job Role:</span> {{ employee["JobRole"] }}</p>
-          <p><span>Years at Company:</span> {{ employee["YearsAtCompany"] }}</p>
-          <p><span>Marital Status:</span> {{ "Married" if employee["MaritalStatus"] == 1 else "Single" }}</p>
-          <p><span>Gender:</span> {{ employee["Gender"] }}</p>
+        <div class="card p-3 mb-3">
+          <p><strong>ID:</strong> {{ employee["EmployeeID"] }}</p>
+          <p><strong>Age:</strong> {{ employee["Age"] }}</p>
+          <p><strong>Income:</strong> {{ employee["MonthlyIncome"] }}</p>
+          <p><strong>Job Role:</strong> {{ employee["JobRole"] }}</p>
+          <p><strong>Years at Company:</strong> {{ employee["YearsAtCompany"] }}</p>
+          <p><strong>Marital Status:</strong> {{ "Married" if employee["MaritalStatus"] == 1 else "Single" }}</p>
+          <p><strong>Gender:</strong> {{ employee["Gender"] }}</p>
         </div>
 
         {% if prediction %}
-          <div id="result" class="{{ 'stay' if prediction == 'Stay' else 'leave' }}">
-            Prediction: {{ prediction }}
+          <div class="{{ 'result-stay' if prediction == 'Stay' else 'result-leave' }}">
+            Prediction: <strong>{{ prediction }}</strong>
           </div>
         {% endif %}
       </div>

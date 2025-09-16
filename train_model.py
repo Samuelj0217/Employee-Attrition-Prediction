@@ -1,33 +1,38 @@
+import os
 import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import LabelEncoder
-import pickle
+import joblib
 
-# Load dataset
-df = pd.read_csv("employee_data.csv")  # must contain EmployeeID column
+DATA_PATH = "employee_data.csv"
+MODEL_DIR = "model"
+os.makedirs(MODEL_DIR, exist_ok=True)
 
-# Encode categorical features
+df = pd.read_csv(DATA_PATH)
+
+# REQUIRED COLUMNS:
+expected = {"EmployeeID","Age","MonthlyIncome","JobRole","YearsAtCompany","Attrition","MaritalStatus","Gender"}
+if not expected.issubset(set(df.columns)):
+    raise SystemExit(f"CSV missing required columns. Found: {df.columns.tolist()}")
+
+# Encode categorical features but keep original columns in df for dashboard
 le_job = LabelEncoder()
-df["JobRole"] = le_job.fit_transform(df["JobRole"])
-
 le_gender = LabelEncoder()
-df["Gender"] = le_gender.fit_transform(df["Gender"])
 
-# Features and Target
-X = df[["Age", "MonthlyIncome", "JobRole", "YearsAtCompany", "MaritalStatus", "Gender"]]
+df["JobRole_enc"] = le_job.fit_transform(df["JobRole"])
+df["Gender_enc"]  = le_gender.fit_transform(df["Gender"])
+
+X = df[["Age","MonthlyIncome","JobRole_enc","YearsAtCompany","MaritalStatus","Gender_enc"]]
 y = df["Attrition"]
 
-# Split dataset
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train Logistic Regression
-model = LogisticRegression(max_iter=500, solver="liblinear")
+model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X_train, y_train)
 
-# Save model and encoders
-pickle.dump(model, open("model.pkl", "wb"))
-pickle.dump(le_job, open("le_job.pkl", "wb"))
-pickle.dump(le_gender, open("le_gender.pkl", "wb"))
+joblib.dump(model, os.path.join(MODEL_DIR, "model.joblib"))
+joblib.dump(le_job, os.path.join(MODEL_DIR, "le_job.joblib"))
+joblib.dump(le_gender, os.path.join(MODEL_DIR, "le_gender.joblib"))
 
-print("✅ Model, le_job.pkl, le_gender.pkl saved successfully!")
+print("✅ Trained model and encoders saved to 'model/'")
